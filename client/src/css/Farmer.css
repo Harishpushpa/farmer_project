@@ -1,0 +1,83 @@
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sidebar-content {
+  margin-top: 20px;
+}
+
+.sidebar-content p {
+  margin: 5px 0;
+}
+
+.logout, .personaldata, .add-product {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.farmer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.farmer-card {
+  width: 250px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.farmer-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.farmer-info {
+  margin-top: 10px;
+}
+
+.farmer-info p {
+  margin: 5px 0;
+}
+
+.no-review {
+  font-size: 16px;
+  color: #555;
+}
