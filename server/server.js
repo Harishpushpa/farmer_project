@@ -16,8 +16,11 @@ const User = require("./Models/users");
 const Middleman = require("./Models/Middleman");
 const Farmer = require("./Models/Farmer");
 
+
+
+
 // Route to register a user
-// Registration Endpoint
+// // Registration Endpoint
 app.post("/", async (req, res) => {
   try {
     const { email, password, role } = req.body;
@@ -76,7 +79,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email, password, or role" });
     }
 
-    console.log(`User logged in: ${email} with role ${role}`);
+    console.log(`User logged in: ${email} with role ${user}`);
     // Send a single response
     res.status(200).json({
       message: "Login successful",
@@ -88,6 +91,105 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: "Error logging in" });
   }
 });
+
+// const crypto = require("node:crypto");
+
+
+// // Secret Key & IV (Initialization Vector)
+// const secretKey = Buffer.from("0123456789abcdef0123456789abcdef", "utf-8"); // 32-byte key
+// const iv = Buffer.from("abcdef9876543210", "utf-8"); // 16-byte IV
+
+// // Encrypt Function
+// function encryptPassword(password) {
+//   const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
+//   let encrypted = cipher.update(password, "utf-8", "hex");
+//   encrypted += cipher.final("hex");
+//   return encrypted;
+// }
+
+// // Decrypt Function
+// function decryptPassword(encryptedPassword) {
+//   const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
+//   let decrypted = decipher.update(encryptedPassword, "hex", "utf-8");
+//   decrypted += decipher.final("utf-8");
+//   return decrypted;
+// }
+
+// // 🔹 REGISTER Route
+// app.post("/", async (req, res) => {
+//   try {
+//     const { email, password, role } = req.body;
+
+//     // Validate fields
+//     if (!email || !password || !role) {
+//       return res.status(400).json({ error: "All fields are required" });
+//     }
+
+//     // Ensure valid role selection
+//     if (role !== "Farmer" && role !== "Middleman") {
+//       return res.status(400).json({ error: "Invalid role selected" });
+//     }
+
+//     // Check if user already exists
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       console.log(`Attempted registration with existing email: ${email}`);
+//       return res.status(400).json({ error: "Email already exists" });
+//     }
+
+//     // Encrypt password before saving
+//     const encryptedPassword = encryptPassword(password);
+
+//     // Save user to database
+//     const newUser = new User({ email, password: encryptedPassword, role });
+//     await newUser.save();
+    
+//     console.log(`New user registered: ${email} with role ${role}`);
+//     res.status(201).json({ message: "User registered successfully" });
+
+//   } catch (err) {
+//     console.error("Error during registration:", err);
+//     res.status(500).json({ error: "Error saving user" });
+//   }
+// });
+
+// // 🔹 LOGIN Route
+// app.post("/login", async (req, res) => {
+//   try {
+//     const { email, password, role } = req.body;
+
+//     // Validate fields
+//     if (!email || !password || !role) {
+//       return res.status(400).json({ error: "All fields are required" });
+//     }
+
+//     // Find the user by email
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       console.log(`Login attempt failed for non-existing email: ${email}`);
+//       return res.status(401).json({ error: "Invalid email or password" });
+//     }
+
+//     // Decrypt stored password
+//     const decryptedPassword = decryptPassword(user.password);
+
+//     // Check credentials
+//     if (decryptedPassword !== password || user.role !== role) {
+//       console.log(`Login failed for email: ${email} with incorrect password or role`);
+//       return res.status(401).json({ error: "Invalid email, password, or role" });
+//     }
+
+//     console.log(`User logged in: ${email} with role ${role}`);
+//     res.status(200).json({
+//       message: "Login successful",
+//       user: { email: user.email, role: user.role }
+//     });
+
+//   } catch (err) {
+//     console.error("Error during login:", err);
+//     res.status(500).json({ error: "Error logging in" });
+//   }
+// });
 
 // Fetch all middlemen
 app.get("/middlemen", async (req, res) => {

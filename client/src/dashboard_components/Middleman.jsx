@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/middleman.css";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const Middleman = () => {
   const navigate = useNavigate();
@@ -8,10 +8,9 @@ const Middleman = () => {
   const [sortedData, setSortedData] = useState([]);
   const [primarySort, setPrimarySort] = useState("date");
   const [reviewCart, setReviewCart] = useState([]);
-  const [selectedMiddleman, setSelectedMiddleman] = useState(null); // Track clicked card
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
-  
-  // State for user info
+  const [selectedMiddleman, setSelectedMiddleman] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [userInfo, setUserInfo] = useState({
     username: "",
     email: "",
@@ -19,7 +18,6 @@ const Middleman = () => {
   });
 
   useEffect(() => {
-    // Retrieve user info from localStorage
     const storedData = JSON.parse(localStorage.getItem("logindata"));
     if (storedData) {
       setUserInfo({
@@ -63,43 +61,63 @@ const Middleman = () => {
     }
   };
 
+  const cropPrices = [
+    { name: "Wheat", minPrice: 1500, maxPrice: 2000 },
+    { name: "Rice", minPrice: 1800, maxPrice: 2500 },
+    { name: "Cotton", minPrice: 4000, maxPrice: 5500 },
+    { name: "Millets", minPrice: 1200, maxPrice: 1800 },
+  ];
+
   const addToReview = (middleman) => {
-    setReviewCart((prevCart) => [...prevCart, middleman]);
+    setReviewCart((prevCart) => {
+      if (!prevCart.some((item) => item._id === middleman._id)) {
+        return [...prevCart, middleman];
+      }
+      return prevCart;
+    });
   };
 
-  // Handle the search functionality
   const handleSearch = (e) => {
-    const query = e.target.value;
+    const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
 
-    // Filter middlemen data based on the search query (case insensitive)
-    const filteredData = middlemen.filter((middleman) =>
-      middleman.name.toLowerCase().includes(query.toLowerCase()) ||
-      middleman.pincode.includes(query) ||
-      middleman.cropType.toLowerCase().includes(query.toLowerCase())
+    const filteredData = middlemen.filter(
+      (middleman) =>
+        middleman.name.toLowerCase().includes(query) ||
+        middleman.pincode.includes(query) ||
+        middleman.cropType.toLowerCase().includes(query)
     );
 
-    // Update sortedData with filtered results
     setSortedData(filteredData);
+  };
+
+  const getCurrentDate = () => {
+    return new Date().toLocaleDateString();
   };
 
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
-        <h2>farmer Place</h2>
-        <p>{userInfo.username} ({userInfo.email}) - {userInfo.role}</p> {/* Display user info */}
+        <h2>Farmer Place</h2>
+        <p>
+          {userInfo.username} ({userInfo.email}) - {userInfo.role}
+        </p>
         <button
-  className="logout"
-  onClick={() => {
-    localStorage.removeItem("logindata");
-    setUserInfo({ username: "", email: "", role: "" }); // Clear user info from state
-    navigate("/"); // Navigate to the home page (or login page)
-  }}
->
-  Logout
-</button>
-        <button className="personaldata" onClick={() => navigate("/personaldata")}>Personal Data</button>
-        <button className="add-product" onClick={() => navigate("/farmer/newproduct")}>Add Product</button>
+          className="logout"
+          onClick={() => {
+            localStorage.removeItem("logindata");
+            setUserInfo({ username: "", email: "", role: "" });
+            navigate("/login");
+          }}
+        >
+          Logout
+        </button>
+        <button className="personaldata" onClick={() => navigate("/personaldata")}>
+          Personal Data
+        </button>
+        <button className="add-product" onClick={() => navigate("/farmer/newproduct")}>
+          Add Product
+        </button>
       </aside>
       <main className="content">
         <div className="header">
@@ -112,7 +130,6 @@ const Middleman = () => {
               <option value="cropType">Sort by Crop Type</option>
             </select>
           </div>
-          {/* Search input */}
           <div className="search-container">
             <input
               type="text"
@@ -123,12 +140,23 @@ const Middleman = () => {
           </div>
         </div>
 
+        <div className="marquee-container">
+          <marquee className="marquee">
+            <span className="marquee-title">📢 Tamil Nadu Crop Prices ({getCurrentDate()}): </span>
+            {cropPrices.map((crop, index) => (
+              <span key={index} className="marquee-item">
+                {crop.name}: ₹{crop.minPrice} - ₹{crop.maxPrice} &nbsp;|&nbsp;
+              </span>
+            ))}
+          </marquee>
+        </div>
+
         <div className="middleman-list">
           {sortedData.map((middleman) => (
-            <div 
-              key={middleman._id} 
+            <div
+              key={middleman._id}
               className="middleman-card"
-              onClick={() => setSelectedMiddleman(middleman)} // Open big card on click
+              onClick={() => setSelectedMiddleman(middleman)}
             >
               <img src={middleman.photo} alt={middleman.name} className="middleman-photo" />
               <div className="middleman-info">
@@ -140,13 +168,14 @@ const Middleman = () => {
                 <p><strong>Price Offered:</strong> ₹{middleman.priceOffered}</p>
                 <p><strong>Quality Needed:</strong> {middleman.qualityNeeded}</p>
                 <p><strong>Date:</strong> {new Date(middleman.datePublished).toLocaleDateString()}</p>
-                <button className="add-to-review" onClick={(e) => { e.stopPropagation(); addToReview(middleman); }}>Add to Review</button>
+                <button className="add-to-review" onClick={(e) => { e.stopPropagation(); addToReview(middleman); }}>
+                  Add to Review
+                </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Big Card Popup (Appears on Click) */}
         {selectedMiddleman && (
           <div className="big-card">
             <div className="big-card-content">
@@ -164,21 +193,6 @@ const Middleman = () => {
             </div>
           </div>
         )}
-
-        <div className="review-section">
-          <h2>Review Cart</h2>
-          {reviewCart.length > 0 ? (
-            <ul className="review-list">
-              {reviewCart.map((item, index) => (
-                <li key={`${item._id}-${index}`} className="review-item">
-                  {item.name} - {item.cropType} - ₹{item.priceOffered}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="no-review">No items in the review cart.</p>
-          )}
-        </div>
       </main>
     </div>
   );
